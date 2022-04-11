@@ -15,6 +15,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using MySql.Data.MySqlClient;
 using Microsoft.Win32;
+using System.Diagnostics;
 
 namespace CodeFox_Shop
 {
@@ -27,11 +28,7 @@ namespace CodeFox_Shop
 
         private MySqlConnection connection;
 
-        private string server = "";
-        private string database = "systicore";
-        private string table = "products";
-        private string username = "admin";
-        private string password = "admin123";
+        private string server = "149.200.35.85";
 
         private void ReadFile(string filename)
         {
@@ -77,14 +74,41 @@ namespace CodeFox_Shop
         #region MenuItemActions
         private void NewSQLConnection(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("Feature");
-            connection = new MySqlConnection();
-            string IP = "";
-            String connectionString = $"server={IP};uid=admin;pwd=admin123;database=systicore";
+            try
+            {
+                if (connection != null)
+                {
+                    connection.Close();
+                }
+                connection = new MySqlConnection();
+                String connectionString = $"server={server};uid=admin;pwd=Admin123;database=systicore";
+                connection.ConnectionString = connectionString;
+                connection.Open();
+                String sql = $"SELECT * FROM products";
+                MySqlCommand cmd = new MySqlCommand(sql, connection);
+                MySqlDataReader rdr = cmd.ExecuteReader();
+                products.Clear();
+                while (rdr.Read())
+                {
+                    products.Add(new Product($"{rdr.GetString(0)};{rdr.GetString(1)};{rdr.GetInt32(2)};{rdr.GetDouble(3)}"));
+                }
+                productTable.Items.Refresh();
+            }
+            catch (System.Net.Sockets.SocketException ex)
+            {
+                MessageBox.Show(ex.Message.ToString(), "Nem lehet kapcsolodni");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
         }
         private void CloseSQLConnection(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("Feature");
+            if (connection != null)
+            {
+                connection.Close();
+            }
         }
         private void CheckEAN13(object sender, RoutedEventArgs e)
         {
@@ -157,7 +181,8 @@ namespace CodeFox_Shop
             //darabtb.Clear();
             //egysegtb.Text = helperObject.Egysegar.ToString();
             //egysegtb.Clear();
-
+            MessageBox.Show("Feature");
+            System.Diagnostics.Process.Start("cmd", "/C start https://www.youtube.com/watch?v=dQw4w9WgXcQ");
         }
         #endregion
 
