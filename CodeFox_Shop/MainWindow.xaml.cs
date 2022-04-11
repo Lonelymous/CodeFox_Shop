@@ -3,6 +3,7 @@ using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -45,7 +46,7 @@ namespace CodeFox_Shop
             sw.WriteLine(sample);
             foreach (Product product in products)
             {
-                sw.WriteLine($"{product.EAN13};{product.Name};{product.Quantity};{product.Price}");
+                sw.WriteLine($"{product.EAN13};{product.Name};{product.Quantity};{product.Price.ToString().Replace(Convert.ToChar(Thread.CurrentThread.CurrentCulture.NumberFormat.NumberDecimalSeparator), '.')}");
             }
             sw.Flush();
             sw.Close();
@@ -164,25 +165,16 @@ namespace CodeFox_Shop
         }
         private void EditProductButton_Click(object sender, RoutedEventArgs e)
         {
-            //Product helperObject;
-            //if (productTable.SelectedItem == null)
-            //{
-            //    helperObject = (Product)productTable.Items[0];
-            //}
-            //else
-            //{
-            //    helperObject = (Product)productTable.SelectedItem;
-            //}
-            //ean13tb.Text = helperObject.EAN13;
-            //ean13tb.Clear();
-            //nevtb.Text = helperObject.Nev;
-            //nevtb.Clear();
-            //darabtb.Text = helperObject.Darabszam.ToString();
-            //darabtb.Clear();
-            //egysegtb.Text = helperObject.Egysegar.ToString();
-            //egysegtb.Clear();
-            MessageBox.Show("Feature");
-            System.Diagnostics.Process.Start("cmd", "/C start https://www.youtube.com/watch?v=dQw4w9WgXcQ");
+            if (productTable.SelectedIndex == -1)
+            {
+                productTable.SelectedIndex = products.Count - 1;
+            }
+            Product helperObject = productTable.SelectedItem as Product;
+            MainTabcontrol.SelectedIndex = 1;
+            ean13TB.Text = helperObject.EAN13;
+            nameTB.Text = helperObject.Name;
+            quantityTB.Text = helperObject.Quantity.ToString();
+            priceTB.Text = helperObject.Price.ToString();
         }
         #endregion
 
@@ -191,11 +183,13 @@ namespace CodeFox_Shop
         {
             if (ean13TB.Text.Trim() != "")
             {
+                bool contain = false;
                 // Check if EAN13 is exists in products
                 foreach (Product product in products)
                 {
                     if (product.EAN13 == ean13TB.Text)
                     {
+                        contain = true;
                         try
                         {
                             product.Name = nameTB.Text;
@@ -208,11 +202,10 @@ namespace CodeFox_Shop
                             break;
                         }
                     }
-                    else
-                    {
-                        products.Add(new Product($"{ean13TB.Text};{nameTB.Text};{quantityTB.Text};{priceTB.Text}"));
-                        break;
-                    }
+                }
+                if (!contain)
+                {
+                    products.Add(new Product($"{ean13TB.Text};{nameTB.Text};{quantityTB.Text};{priceTB.Text}"));
                 }
             }
             ean13TB.Clear();
