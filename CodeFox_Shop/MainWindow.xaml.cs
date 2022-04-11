@@ -63,7 +63,6 @@ namespace CodeFox_Shop
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             products = new List<Product>();
-            CustomerItems = new List<Product>();
             ReadFile(filename);
             productTable.ItemsSource = products;
         }
@@ -204,57 +203,80 @@ namespace CodeFox_Shop
         private void newCustomerButton_Click(object sender, RoutedEventArgs e)
         {
             // New Customer
-            CustomerItems.Clear();
-            buyTable.Items.Refresh();
+            try
+            {
+                CustomerItems = new List<Product>();
+                buyTable.Items.Refresh();
+            }
+            catch
+            {
+                MessageBox.Show("Hiba az új vevő létrehozása folyamán", "Hiba!", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
-
         private void DeleteItemFromCustomer_Click(object sender, RoutedEventArgs e)
         {
             // Delete last item from the BuyList
-            CustomerItems.RemoveAt(CustomerItems.Count-1);
-            buyTable.Items.Refresh();
+            try
+            {
+                CustomerItems.RemoveAt(CustomerItems.Count - 1);
+                buyTable.Items.Refresh();
+            }
+            catch
+            {
+                MessageBox.Show("Hiba a törlés folyamán", "Hiba!", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
-
         private void AddItemToCustomer_Click(object sender, RoutedEventArgs e)
         {
             try
             {
-                if (products.Any(x => x.EAN13 == vonalkodTB.Text))
+                if (CustomerItems == null)
                 {
-                    // Megnézzük, hogy van-e ilyen termék, de azt lekezeljük.
-                    Product thatItem = products.Where(x => x.EAN13 == vonalkodTB.Text).First();
-                    int szam = 1;
-                    if (darabszamTB.Text != "")
+                    if (MessageBox.Show("Nincs új vásárló létrehozva.\n Szeretnél egyet létrehozni?", "",MessageBoxButton.YesNo) == MessageBoxResult.Yes)
                     {
-                        szam = Convert.ToInt32(darabszamTB.Text);
+                        newCustomerButton_Click(null,null);
+                        AddItemToCustomer_Click(null,null);
                     }
-                    //
-                    if (CustomerItems.Any(x => x.EAN13 == vonalkodTB.Text))
-                    {
-                        Product thatItemhaha = CustomerItems.Where(x => x.EAN13 == vonalkodTB.Text).First();
-                        thatItemhaha.Quantity += szam;
-                    }
-                    else
-                    {
-                        CustomerItems.Add(new Product($"{vonalkodTB.Text};{thatItem.Name};{szam};{thatItem.Price}"));
-                    }
-                    double vegosszegi = 0.0f;
-                    foreach (Product ci in CustomerItems)
-                    {
-                        vegosszegi += ci.Quantity * ci.Price;
-                    }
-                    buyTable.ItemsSource = CustomerItems;
-                    buyTable.Items.Refresh();
-                    vegosszeg.Content = $"{vegosszegi} Ft";
                 }
                 else
                 {
-                    MessageBox.Show("Nincs ilyen termék!");
+                    if (products.Any(x => x.EAN13 == barcodeTB.Text))
+                    {
+                        // Megnézzük, hogy van-e ilyen termék, de azt lekezeljük.
+                        Product thatItem = products.Where(x => x.EAN13 == barcodeTB.Text).First();
+                        int number = 1;
+                        if (darabszamTB.Text != "")
+                        {
+                            number = Convert.ToInt32(darabszamTB.Text);
+                        }
+                        //
+                        if (CustomerItems.Any(x => x.EAN13 == barcodeTB.Text))
+                        {
+                            Product thatItemhaha = CustomerItems.Where(x => x.EAN13 == barcodeTB.Text).First();
+                            thatItemhaha.Quantity += number;
+                        }
+                        else
+                        {
+                            CustomerItems.Add(new Product($"{barcodeTB.Text};{thatItem.Name};{number};{thatItem.Price}"));
+                        }
+                        double vegosszegi = 0.0f;
+                        foreach (Product ci in CustomerItems)
+                        {
+                            vegosszegi += ci.Quantity * ci.Price;
+                        }
+                        buyTable.ItemsSource = CustomerItems;
+                        buyTable.Items.Refresh();
+                        vegosszeg.Content = $"{vegosszegi} Ft";
+                    }
+                    else
+                    {
+                        MessageBox.Show("Nincs ilyen termék!");
 
+                    }
                 }
-                vonalkodTB.Clear();
+                barcodeTB.Clear();
                 darabszamTB.Clear();
-                vonalkodTB.Focus();
+                barcodeTB.Focus();
             }
             catch (Exception ex)
             {
@@ -267,18 +289,13 @@ namespace CodeFox_Shop
 
         #region Shopping
 
-
-
-
-
-        private void vonalkodTB_KeyDown(object sender, KeyEventArgs e)
+        private void barcodeTB_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter)
             {
                 AddItemToCustomer_Click(this, null);
             }
         }
-
         private void Buy_Click(object sender, RoutedEventArgs e)
         {
             foreach (Product item in products)
@@ -293,64 +310,11 @@ namespace CodeFox_Shop
             }
             CustomerItems.Clear();
             vegosszeg.Content = "0 Ft";
-            foreach (var item in products)
-            {
-                Console.WriteLine(item.EAN13);
-                Console.WriteLine(item.Name);
-                Console.WriteLine(item.Quantity);
-            }
             buyTable.ItemsSource = CustomerItems;
             buyTable.Items.Refresh();
             productTable.ItemsSource = products;
             productTable.Items.Refresh();
         }
-
         #endregion
-
-
-
-
-
-
-
-
-
-
-        
-
-        private void Button_Click_1(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                Product helperObject;
-                if (buyTable.SelectedItem == null)
-                {
-                    try
-                    {
-                        helperObject = (Product)buyTable.Items[0];
-                    }
-                    catch
-                    {
-                        helperObject = null;
-                    }
-                }
-                else
-                {
-                    helperObject = (Product)buyTable.SelectedItem;
-                }
-                CustomerItems.Remove(helperObject);
-                buyTable.Items.Refresh();
-            }
-            catch
-            {
-                MessageBox.Show("Hiba a tárgy törlése közben.");
-            }
-        }
-
-
-
-
-
-
     }
 }

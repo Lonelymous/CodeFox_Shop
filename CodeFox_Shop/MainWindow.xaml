@@ -93,8 +93,8 @@
                     <Label Content="Vonalkód:" Grid.Column="0" Grid.Row="0" FontSize="20" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                     <Label Content="Darabszám:" Grid.Column="0" Grid.Row="1" FontSize="20" VerticalAlignment="Center" HorizontalAlignment="Center"/>
 
-                    <TextBox x:Name="vonalkodTB" Grid.Column="1" Grid.Row="0" Margin="10" FontSize="20" VerticalAlignment="Center" MaxLength="13"
-                             KeyDown="vonalkodTB_KeyDown"/>
+                    <TextBox x:Name="barcodeTB" Grid.Column="1" Grid.Row="0" Margin="10" FontSize="20" VerticalAlignment="Center" MaxLength="13"
+                             KeyDown="barcodeTB_KeyDown"/>
                     <TextBox x:Name="darabszamTB" Grid.Column="1" Grid.Row="1" Margin="10" FontSize="20" VerticalAlignment="Center" MaxLength="10"/>
 
                     <Button Content="Adat törlése" Grid.Row="2" Grid.Column="0" Click="DeleteItemFromCustomer_Click" Padding="25" FontSize="20" VerticalAlignment="Center" HorizontalAlignment="Center"/>
