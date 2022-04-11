@@ -13,15 +13,15 @@
         </Grid.RowDefinitions>
         <Menu FontSize="16" Background="LightGray" Grid.Row="0">
             <MenuItem Header="Beállítások">
-                <MenuItem x:Name="DatabaseButton" Header="Kapcsolat nyitása" Click="NewSQLConnection"/>
-                <MenuItem x:Name="DatabaseButton2" Header="Kapcsolat bezárása" Click="CloseSQLConnection"/>
+                <MenuItem Header="Kapcsolat nyitása" Click="NewSQLConnection"/>
+                <MenuItem Header="Kapcsolat bezárása" Click="CloseSQLConnection"/>
             </MenuItem>
-            <MenuItem x:Name="CheckEAN13Button" Header="EAN13 kódellenőrző" Click="CheckEAN13"/>
+            <MenuItem Header="EAN13 kódellenőrző" Click="CheckEAN13"/>
         </Menu>
         <TabControl x:Name="MainTabcontrol" Grid.Row="1">
-            <TabItem x:Name="termekTab" Header="Terméklista" Loaded="termekTab_Loaded">
-                <Grid>
-                    <Grid x:Name="termekGrid">
+            <TabItem Header="Terméklista" Loaded="termekTab_Loaded">
+                <Grid Margin="20">
+                    <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="4*"/>
                             <RowDefinition Height="*"/>
@@ -34,16 +34,22 @@
                             <ColumnDefinition Width="2*"/>
                             <ColumnDefinition Width="0.25*"/>
                         </Grid.ColumnDefinitions>
+                        
                         <DataGrid x:Name="productTable" Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="4" Margin="10"/>
-                        <Button x:Name="ImportButton" Content="Termékek importálása" Grid.Row="1" Grid.Column="1" Margin="20" Click="ImportButton_Click"/>
-                        <Button x:Name="ExportButton" Content="Termékek exporálása" Grid.Row="1" Grid.Column="2" Margin="20" Click="ExportButton_Click"/>
-                        <Button x:Name="NewProductButton" Content="Új termék" Grid.Row="1" Grid.Column="3" Margin="20" Click="NewProductButton_Click"/>
-                        <Button x:Name="EditProductButton" Content="Termék szerkesztése" Grid.Row="1" Grid.Column="4" Margin="20" Click="EditProductButton_Click"/>
+                        
+                        <Button Content="Termékek importálása" Grid.Row="1" Grid.Column="1"                   
+                                Click="ImportButton_Click" Margin="20" FontSize="20"/>
+                        <Button Content="Termékek exporálása" Grid.Row="1" Grid.Column="2"                    
+                                Click="ExportButton_Click" Margin="20" FontSize="20"/>
+                        <Button Content="Új termék" Grid.Row="1" Grid.Column="3"                          
+                                Click="NewProductButton_Click" Margin="20" FontSize="20"/>
+                        <Button Content="Termék szerkesztése" Grid.Row="1" Grid.Column="4"               
+                                Click="EditProductButton_Click" Margin="20" FontSize="20"/>
                     </Grid>
                 </Grid>
             </TabItem>
             <TabItem Header="Bevitelezés">
-                <Grid x:Name="bevitelGrid" Margin="20">
+                <Grid Margin="20">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="*"/>
@@ -56,19 +62,22 @@
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
-                    <Label Content="EAN13 kód:" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" FontSize="30"/>
-                    <Label Content="Név:" Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" FontSize="30"/>
-                    <Label Content="Darabszám:" Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" FontSize="30"/>
-                    <Label Content="Egységár:" Grid.Row="3" Grid.Column="0" VerticalAlignment="Center" FontSize="30"/>
-                    <TextBox x:Name="ean13tb" Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" VerticalAlignment="Center" Margin="20,0,20,0" FontSize="30"/>
-                    <TextBox x:Name="nevtb" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" VerticalAlignment="Center" Margin="20,0,20,0" FontSize="30"/>
-                    <TextBox x:Name="darabtb" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" VerticalAlignment="Center" Margin="20,0,20,0" FontSize="30"/>
-                    <TextBox x:Name="egysegtb" Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2" VerticalAlignment="Center" Margin="20,0,20,0" FontSize="30"/>
-                    <Button Content="Termék hozzáadása" Grid.Row="4" Grid.Column="2" Click="Button_Click" VerticalAlignment="Center" Margin="20,10,20,10" FontSize="30"/>
+                    <Label Content="EAN13 kód:" Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" FontSize="20"/>
+                    <Label Content="Név:" Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" FontSize="20"/>
+                    <Label Content="Darabszám:" Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" FontSize="20"/>
+                    <Label Content="Egységár:" Grid.Row="3" Grid.Column="0" VerticalAlignment="Center" FontSize="20"/>
+                    <TextBox x:Name="ean13TB" Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" VerticalAlignment="Center" Margin="20,0,20,0" FontSize="20" 
+                             MaxLength="13"/>
+                    <TextBox x:Name="nameTB" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" VerticalAlignment="Center" Margin="20,0,20,0" FontSize="20"/>
+                    <TextBox x:Name="quantityTB" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" VerticalAlignment="Center" Margin="20,0,20,0" FontSize="20" 
+                             MaxLength="10"/>
+                    <TextBox x:Name="priceTB" Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2" VerticalAlignment="Center" Margin="20,0,20,0" FontSize="20" 
+                             MaxLength="10"/>
+                    <Button Content="Termék hozzáadása" Grid.Row="4" Grid.Column="2" Click="AddItemToDatabase" VerticalAlignment="Center" Margin="20,10,20,10" Padding="10" FontSize="20"/>
                 </Grid>
             </TabItem>
             <TabItem Header="Értékesítés">
-                <Grid x:Name="ertekesitesGrid">
+                <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="2*"/>
                         <ColumnDefinition Width="2*"/>
@@ -81,20 +90,21 @@
                         <RowDefinition Height="1*"/>
                     </Grid.RowDefinitions>
 
-                    <Label Content="Vonalkód: " Grid.Column="0" Grid.Row="0" FontSize="30" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                    <Label Content="Darabszám:" Grid.Column="0" Grid.Row="1" FontSize="30" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                    
-                    <TextBox x:Name="vonalkodTB" Grid.Column="1" Grid.Row="0" KeyDown="vonalkodTB_KeyDown"/>
-                    <TextBox x:Name="darabszamTB" Grid.Column="1" Grid.Row="1"/>
+                    <Label Content="Vonalkód:" Grid.Column="0" Grid.Row="0" FontSize="20" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    <Label Content="Darabszám:" Grid.Column="0" Grid.Row="1" FontSize="20" VerticalAlignment="Center" HorizontalAlignment="Center"/>
 
-                    <Button x:Name="DeleteItemFromCustomerBTN" Content="Adat törlése" Grid.Row="2" Grid.Column="0" Click="DeleteItemFromCustomer_Click" Padding="25" FontSize="30" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                    <Button x:Name="AddItemToCustomerBTN" Content="Adat hozzáadása" Grid.Row="2" Grid.Column="1" Click="AddItemToCustomer_Click" Padding="25" FontSize="30" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                    <Button x:Name="newCustomerBTN" Content="Új vevő" Grid.Row="5" Grid.Column="0" Click="newCustomerButton_Click" Padding="25,5" FontSize="30" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    <TextBox x:Name="vonalkodTB" Grid.Column="1" Grid.Row="0" Margin="10" FontSize="20" VerticalAlignment="Center" MaxLength="13"
+                             KeyDown="vonalkodTB_KeyDown"/>
+                    <TextBox x:Name="darabszamTB" Grid.Column="1" Grid.Row="1" Margin="10" FontSize="20" VerticalAlignment="Center" MaxLength="10"/>
 
-                    <Label x:Name="vegosszeg" Content="Fizetendő összeg:" Grid.Row="5" Grid.Column="1" FontSize="30" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                    <Button x:Name="BuyBTN" Content="Vásárlás" Grid.Row="5" Grid.Column="4" Margin="12,40,12,0" Click="Buy_Click"/>
+                    <Button Content="Adat törlése" Grid.Row="2" Grid.Column="0" Click="DeleteItemFromCustomer_Click" Padding="25" FontSize="20" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    <Button Content="Adat hozzáadása" Grid.Row="2" Grid.Column="1" Click="AddItemToCustomer_Click" Padding="25" FontSize="20" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    <Button Content="Új vevő" Grid.Row="5" Grid.Column="0" Click="newCustomerButton_Click" Padding="25,5" FontSize="20" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+
+                    <Label x:Name="vegosszeg" Content="Fizetendő összeg:" Grid.Row="5" Grid.Column="1" FontSize="20" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    <Button Content="Vásárlás" Grid.Row="5" Grid.Column="4" Margin="15" FontSize="20" Click="Buy_Click"/>
                     
-                    <DataGrid x:Name="buyTable" Grid.Row="0" Grid.Column="3" Grid.ColumnSpan="2" Grid.RowSpan="3"/>
+                    <DataGrid x:Name="buyTable" Grid.Row="0" Grid.Column="3" Grid.ColumnSpan="2" Grid.RowSpan="3" Margin="15"/>
                 </Grid>
             </TabItem>
         </TabControl>

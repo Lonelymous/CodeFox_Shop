@@ -33,40 +33,39 @@ namespace CodeFox_Shop
         private string username = "admin";
         private string password = "admin123";
 
+        private void ReadFile(string filename)
+        {
+            products.Clear();
+            foreach (string line in File.ReadAllLines(filename).Skip(1))
+            {
+                products.Add(new Product(line));
+            }
+            productTable.Items.Refresh();
+        }
+        private void WriteFile(string filename)
+        {
+            StreamWriter sw = new StreamWriter(filename);
+            sw.WriteLine(sample);
+            foreach (Product product in products)
+            {
+                sw.WriteLine($"{product.EAN13};{product.Name};{product.Quantity};{product.Price}");
+            }
+            sw.Flush();
+            sw.Close();
+        }
 
         public MainWindow()
         {
             InitializeComponent();
         }
 
-
-
-
-
-
-
-
-
-        private void NewSQLConnection(object sender, RoutedEventArgs e)
-        {
-            connection = new MySqlConnection();
-            string IP = "";
-            String connectionString = $"server={IP};uid=admin;pwd=admin123;database=systicore";
-        }
-
-        private void CloseSQLConnection(object sender, RoutedEventArgs e)
-        {
-
-        }
-
+        #region WindowActions
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             products = new List<Product>();
             CustomerItems = new List<Product>();
-
-            // LoadDatas;
-
             ReadFile(filename);
+            productTable.ItemsSource = products;
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -74,114 +73,250 @@ namespace CodeFox_Shop
             WriteFile(filename);
         }
 
-        private void ReadFile(string fajlnev)
-        {
-            products.Clear();
-            foreach (string sor in File.ReadAllLines(fajlnev).Skip(1))
-            {
-                products.Add(new Product(sor));
-                Console.WriteLine(sor);
-            }
-        }
+        #endregion
 
-        private void WriteFile(string fajlnev)
+        #region MenuItemActions
+        private void NewSQLConnection(object sender, RoutedEventArgs e)
         {
-            StreamWriter sw = new StreamWriter(fajlnev);
-            sw.WriteLine(sample);
-            foreach (Product product in products)
-            {
-                sw.WriteLine($"{product.EAN13};{product.Nev};{product.Darabszam};{product.Egysegar}");
-            }
-            sw.Flush();
-            sw.Close();
+            MessageBox.Show("Feature");
+            connection = new MySqlConnection();
+            string IP = "";
+            String connectionString = $"server={IP};uid=admin;pwd=admin123;database=systicore";
         }
-
-        private void LoadDataToTable()
+        private void CloseSQLConnection(object sender, RoutedEventArgs e)
         {
-            productTable.ItemsSource = products;
-            productTable.Items.Refresh();
+            MessageBox.Show("Feature");
         }
-
-        private void termekTab_Loaded(object sender, RoutedEventArgs e)
+        private void CheckEAN13(object sender, RoutedEventArgs e)
         {
-            LoadDataToTable();
+            MessageBox.Show("Feature");
         }
+        #endregion
 
         #region termekTabButtonActions
+        private void termekTab_Loaded(object sender, RoutedEventArgs e)
+        {
+            productTable.Items.Refresh();
+        }
         private void ImportButton_Click(object sender, RoutedEventArgs e)
         {
-            OpenFileDialog openFileDialog = new OpenFileDialog();
-            openFileDialog.Filter = "CSV File (.csv)|*.csv";
-            openFileDialog.Title = "Open a CSV file";
-
-            if (openFileDialog.ShowDialog() == true)
+            try
             {
-                ReadFile(openFileDialog.FileName);
+                OpenFileDialog openFileDialog = new OpenFileDialog();
+                openFileDialog.Filter = "CSV File (.csv)|*.csv";
+                openFileDialog.Title = "Open a CSV file";
+
+                if (openFileDialog.ShowDialog() == true)
+                {
+                    ReadFile(openFileDialog.FileName);
+                }
+            }
+            catch (Exception exception)
+            {
+                MessageBox.Show("Hiba az adatok importálása közben.");
+                MessageBox.Show(exception.Message);
             }
         }
-
         private void ExportButton_Click(object sender, RoutedEventArgs e)
         {
-            SaveFileDialog saveFileDialog = new SaveFileDialog();
-            saveFileDialog.Filter = "CSV File (.csv)|*.csv";
-            saveFileDialog.Title = "Save a CSV file";
-            if (saveFileDialog.ShowDialog() == true)
+            try
             {
-                try
+                SaveFileDialog saveFileDialog = new SaveFileDialog();
+                saveFileDialog.Filter = "CSV File (.csv)|*.csv";
+                saveFileDialog.Title = "Save a CSV file";
+                if (saveFileDialog.ShowDialog() == true)
                 {
                     WriteFile(saveFileDialog.FileName);
                 }
-                catch (Exception exception)
-                {
-                    MessageBox.Show(exception.Message);
-                }
+            }
+            catch (Exception exception)
+            {
+                MessageBox.Show("Hiba az adatok exportálása közben.");
+                MessageBox.Show(exception.Message);
             }
         }
         private void NewProductButton_Click(object sender, RoutedEventArgs e)
         {
             MainTabcontrol.SelectedIndex = 1;
         }
-
         private void EditProductButton_Click(object sender, RoutedEventArgs e)
         {
-            Product helperObject;
-            if (productTable.SelectedItem == null)
-            {
-                helperObject = (Product)productTable.Items[0];
-            }
-            else
-            {
-                helperObject = (Product)productTable.SelectedItem;
-            }
-            ean13tb.Text = helperObject.EAN13;
-            ean13tb.Clear();
-            nevtb.Text = helperObject.Nev;
-            nevtb.Clear();
-            darabtb.Text = helperObject.Darabszam.ToString();
-            darabtb.Clear();
-            egysegtb.Text = helperObject.Egysegar.ToString();
-            egysegtb.Clear();
+            //Product helperObject;
+            //if (productTable.SelectedItem == null)
+            //{
+            //    helperObject = (Product)productTable.Items[0];
+            //}
+            //else
+            //{
+            //    helperObject = (Product)productTable.SelectedItem;
+            //}
+            //ean13tb.Text = helperObject.EAN13;
+            //ean13tb.Clear();
+            //nevtb.Text = helperObject.Nev;
+            //nevtb.Clear();
+            //darabtb.Text = helperObject.Darabszam.ToString();
+            //darabtb.Clear();
+            //egysegtb.Text = helperObject.Egysegar.ToString();
+            //egysegtb.Clear();
+
         }
         #endregion
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        #region bevitelezesTabButtonActions
+        private void AddItemToDatabase(object sender, RoutedEventArgs e)
         {
-            if (ean13tb.Text != "")
+            if (ean13TB.Text.Trim() != "")
             {
-                try
+                // Check if EAN13 is exists in products
+                foreach (Product product in products)
                 {
-                    var he = products.IndexOf(products.Where(x => x.EAN13 == ean13tb.Text).First());
-                    if (he != -1)
+                    if (product.EAN13 == ean13TB.Text)
                     {
-                        products.RemoveAt(he);
+                        try
+                        {
+                            product.Name = nameTB.Text;
+                            product.Quantity = Convert.ToInt32(quantityTB.Text);
+                            product.Price = Convert.ToDouble(priceTB.Text);
+                        }
+                        catch
+                        {
+                            MessageBox.Show("Hiba!");
+                            break;
+                        }
+                    }
+                    else
+                    {
+                        products.Add(new Product($"{ean13TB.Text};{nameTB.Text};{quantityTB.Text};{priceTB.Text}"));
+                        break;
                     }
                 }
-                catch { }
-                products.Add(new Product($"{ean13tb.Text};{nevtb.Text};{darabtb.Text};{egysegtb.Text}"));
-                productTable.Items.Refresh();
-                //termekGrid.Visibility = Visibility.Visible;
+            }
+            ean13TB.Clear();
+            nameTB.Clear();
+            quantityTB.Clear();
+            priceTB.Clear();
+            productTable.Items.Refresh();
+        }
+        #endregion
+
+        #region ertekesitesTabButtonActions
+
+        private void newCustomerButton_Click(object sender, RoutedEventArgs e)
+        {
+            // New Customer
+            CustomerItems.Clear();
+            buyTable.Items.Refresh();
+        }
+
+        private void DeleteItemFromCustomer_Click(object sender, RoutedEventArgs e)
+        {
+            // Delete last item from the BuyList
+            CustomerItems.RemoveAt(CustomerItems.Count-1);
+            buyTable.Items.Refresh();
+        }
+
+        private void AddItemToCustomer_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                if (products.Any(x => x.EAN13 == vonalkodTB.Text))
+                {
+                    // Megnézzük, hogy van-e ilyen termék, de azt lekezeljük.
+                    Product thatItem = products.Where(x => x.EAN13 == vonalkodTB.Text).First();
+                    int szam = 1;
+                    if (darabszamTB.Text != "")
+                    {
+                        szam = Convert.ToInt32(darabszamTB.Text);
+                    }
+                    //
+                    if (CustomerItems.Any(x => x.EAN13 == vonalkodTB.Text))
+                    {
+                        Product thatItemhaha = CustomerItems.Where(x => x.EAN13 == vonalkodTB.Text).First();
+                        thatItemhaha.Quantity += szam;
+                    }
+                    else
+                    {
+                        CustomerItems.Add(new Product($"{vonalkodTB.Text};{thatItem.Name};{szam};{thatItem.Price}"));
+                    }
+                    double vegosszegi = 0.0f;
+                    foreach (Product ci in CustomerItems)
+                    {
+                        vegosszegi += ci.Quantity * ci.Price;
+                    }
+                    buyTable.ItemsSource = CustomerItems;
+                    buyTable.Items.Refresh();
+                    vegosszeg.Content = $"{vegosszegi} Ft";
+                }
+                else
+                {
+                    MessageBox.Show("Nincs ilyen termék!");
+
+                }
+                vonalkodTB.Clear();
+                darabszamTB.Clear();
+                vonalkodTB.Focus();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                MessageBox.Show(ex.ToString());
             }
         }
+
+        #endregion
+
+        #region Shopping
+
+
+
+
+
+        private void vonalkodTB_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                AddItemToCustomer_Click(this, null);
+            }
+        }
+
+        private void Buy_Click(object sender, RoutedEventArgs e)
+        {
+            foreach (Product item in products)
+            {
+                foreach (Product item2 in CustomerItems)
+                {
+                    if (item.EAN13 == item2.EAN13)
+                    {
+                        item.Quantity -= item2.Quantity;
+                    }
+                }
+            }
+            CustomerItems.Clear();
+            vegosszeg.Content = "0 Ft";
+            foreach (var item in products)
+            {
+                Console.WriteLine(item.EAN13);
+                Console.WriteLine(item.Name);
+                Console.WriteLine(item.Quantity);
+            }
+            buyTable.ItemsSource = CustomerItems;
+            buyTable.Items.Refresh();
+            productTable.ItemsSource = products;
+            productTable.Items.Refresh();
+        }
+
+        #endregion
+
+
+
+
+
+
+
+
+
+
+        
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
@@ -212,92 +347,10 @@ namespace CodeFox_Shop
             }
         }
 
-        private void newCustomerButton_Click(object sender, RoutedEventArgs e)
-        {
-            CustomerItems.Clear();
-            buyTable.Items.Refresh();
-        }
 
-        private void AddItemToCustomer_Click(object sender, RoutedEventArgs e)
-        {
 
-            try
-            {
-                if (products.Any(x => x.EAN13 == vonalkodTB.Text))
-                {
-                    // Megnézzük, hogy van-e ilyen termék, de azt lekezeljük.
-                    Product thatItem = products.Where(x => x.EAN13 == vonalkodTB.Text).First();
-                    int szam = 1;
-                    if (darabszamTB.Text != "")
-                    {
-                        szam = Convert.ToInt32(darabszamTB.Text);
-                    }
-                    //
-                    if (CustomerItems.Any(x => x.EAN13 == vonalkodTB.Text))
-                    {
-                        Product thatItemhaha = CustomerItems.Where(x => x.EAN13 == vonalkodTB.Text).First();
-                        thatItemhaha.Darabszam += szam;
-                    }
-                    else
-                    {
-                        CustomerItems.Add(new Product($"{vonalkodTB.Text};{thatItem.Nev};{szam};{thatItem.Egysegar}"));
-                    }
-                    double vegosszegi = 0.0f;
-                    foreach (Product ci in CustomerItems)
-                    {
-                        vegosszegi += ci.Darabszam * ci.Egysegar;
-                    }
-                    buyTable.ItemsSource = CustomerItems;
-                    buyTable.Items.Refresh();
-                    vegosszeg.Content = $"{vegosszegi} Ft";
-                }
-                else
-                {
-                    MessageBox.Show("Nincs ilyen termék!");
 
-                }
-                vonalkodTB.Clear();
-                darabszamTB.Clear();
-                vonalkodTB.Focus();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-                MessageBox.Show(ex.ToString());
-            }
-        }
-        private void Buy_Click(object sender, RoutedEventArgs e)
-        {
-            foreach (Product item in products)
-            {
-                foreach (Product item2 in CustomerItems)
-                {
-                    if (item.EAN13 == item2.EAN13)
-                    {
-                        item.Darabszam -= item2.Darabszam;
-                    }
-                }
-            }
-            CustomerItems.Clear();
-            vegosszeg.Content = "0 Ft";
-            foreach (var item in products)
-            {
-                Console.WriteLine(item.EAN13);
-                Console.WriteLine(item.Nev);
-                Console.WriteLine(item.Darabszam);
-            }
-            buyTable.ItemsSource = CustomerItems;
-            buyTable.Items.Refresh();
-            productTable.ItemsSource = products;
-            productTable.Items.Refresh();
-        }
 
-        private void vonalkodTB_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.Key == Key.Enter)
-            {
-                AddItemToCustomer_Click(this, null);
-            }
-        }
+
     }
 }
