@@ -2,21 +2,11 @@
 using System.IO;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using MySql.Data.MySqlClient;
 using Microsoft.Win32;
-using System.Diagnostics;
 
 namespace CodeFox_Shop
 {
@@ -26,11 +16,8 @@ namespace CodeFox_Shop
         private List<Product> CustomerItems;
         private string filename { get { return "products.csv"; } }
         private string sample { get { return "Vonalkód;Megnevezés;Raktárkészlet;Egységár"; } }
-
         private MySqlConnection connection;
-
         private string server = "149.200.35.85";
-
         private void ReadFile(string filename)
         {
             products.Clear();
@@ -51,12 +38,10 @@ namespace CodeFox_Shop
             sw.Flush();
             sw.Close();
         }
-
         public MainWindow()
         {
             InitializeComponent();
         }
-
         #region WindowActions
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
@@ -71,7 +56,6 @@ namespace CodeFox_Shop
         }
 
         #endregion
-
         #region MenuItemActions
         private void NewSQLConnection(object sender, RoutedEventArgs e)
         {
@@ -116,7 +100,6 @@ namespace CodeFox_Shop
             MessageBox.Show("Feature");
         }
         #endregion
-
         #region termekTabButtonActions
         private void termekTab_Loaded(object sender, RoutedEventArgs e)
         {
@@ -177,7 +160,6 @@ namespace CodeFox_Shop
             priceTB.Text = helperObject.Price.ToString();
         }
         #endregion
-
         #region bevitelezesTabButtonActions
         private void AddItemToDatabase(object sender, RoutedEventArgs e)
         {
@@ -215,7 +197,6 @@ namespace CodeFox_Shop
             productTable.Items.Refresh();
         }
         #endregion
-
         #region ertekesitesTabButtonActions
 
         private void newCustomerButton_Click(object sender, RoutedEventArgs e)
@@ -304,7 +285,6 @@ namespace CodeFox_Shop
         }
 
         #endregion
-
         #region Shopping
 
         private void barcodeTB_KeyDown(object sender, KeyEventArgs e)
