@@ -53,6 +53,7 @@ namespace CodeFox_Shop
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             WriteFile(filename);
+            CloseSQLConnection(null,null);
         }
 
         #endregion
@@ -163,6 +164,7 @@ namespace CodeFox_Shop
         #region bevitelezesTabButtonActions
         private void AddItemToDatabase(object sender, RoutedEventArgs e)
         {
+            string msgtxt = "Termék módosítva";
             if (ean13TB.Text.Trim() != "")
             {
                 bool contain = false;
@@ -188,6 +190,7 @@ namespace CodeFox_Shop
                 if (!contain)
                 {
                     products.Add(new Product($"{ean13TB.Text};{nameTB.Text};{quantityTB.Text};{priceTB.Text}"));
+                    msgtxt = "Termék hozzáadva";
                 }
             }
             ean13TB.Clear();
@@ -195,6 +198,7 @@ namespace CodeFox_Shop
             quantityTB.Clear();
             priceTB.Clear();
             productTable.Items.Refresh();
+            MessageBox.Show(msgtxt, "", MessageBoxButton.OK);
         }
         #endregion
         #region ertekesitesTabButtonActions
