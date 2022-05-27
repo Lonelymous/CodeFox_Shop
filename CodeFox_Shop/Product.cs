@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 
 namespace CodeFox_Shop
 {
@@ -20,7 +21,7 @@ namespace CodeFox_Shop
                 ean13 = LineArgs[0];
                 name = LineArgs[1];
                 quantity = int.Parse(LineArgs[2]);
-                price = double.Parse(LineArgs[3].Replace('.',Convert.ToChar(System.Threading.Thread.CurrentThread.CurrentCulture.NumberFormat.NumberDecimalSeparator)));
+                price = double.Parse(LineArgs[3].Replace('.',Convert.ToChar(Thread.CurrentThread.CurrentCulture.NumberFormat.NumberDecimalSeparator)));
             }
             catch (Exception ex)
             {

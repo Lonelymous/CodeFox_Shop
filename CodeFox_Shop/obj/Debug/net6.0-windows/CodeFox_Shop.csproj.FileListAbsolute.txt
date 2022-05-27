@@ -28,3 +28,5 @@ D:\Github\CodeFox_Shop\CodeFox_Shop\bin\Debug\net6.0-windows\MySql.Data.dll
 D:\Github\CodeFox_Shop\CodeFox_Shop\bin\Debug\net6.0-windows\Ubiety.Dns.Core.dll
 D:\Github\CodeFox_Shop\CodeFox_Shop\bin\Debug\net6.0-windows\ZstdNet.dll
 D:\Github\CodeFox_Shop\CodeFox_Shop\obj\Debug\net6.0-windows\CodeFox_Shop.csproj.CopyComplete
+D:\Github\CodeFox_Shop\CodeFox_Shop\obj\Debug\net6.0-windows\ConnectSQLWindow.g.cs
+D:\Github\CodeFox_Shop\CodeFox_Shop\obj\Debug\net6.0-windows\ConnectSQLWindow.baml

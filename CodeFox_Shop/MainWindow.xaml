@@ -39,7 +39,7 @@
                         
                         <Button Content="Termékek importálása" Grid.Row="1" Grid.Column="1"                   
                                 Click="ImportButton_Click" Margin="20" FontSize="20"/>
-                        <Button Content="Termékek exporálása" Grid.Row="1" Grid.Column="2"                    
+                        <Button Content="Termékek exportálása" Grid.Row="1" Grid.Column="2"                    
                                 Click="ExportButton_Click" Margin="20" FontSize="20"/>
                         <Button Content="Új termék" Grid.Row="1" Grid.Column="3"                          
                                 Click="NewProductButton_Click" Margin="20" FontSize="20"/>

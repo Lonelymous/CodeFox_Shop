@@ -7,17 +7,20 @@ using System.Windows;
 using System.Windows.Input;
 using MySql.Data.MySqlClient;
 using Microsoft.Win32;
+using System.Text;
 
 namespace CodeFox_Shop
 {
     public partial class MainWindow : Window
     {
-        private List<Product> products;
-        private List<Product> CustomerItems;
+        private List<Product> ? products;
+        private List<Product> ? backupProducts;
+        private List<Product> ? CustomerItems;
         private string filename { get { return "products.csv"; } }
+        private string tableName { get { return "products"; } }
         private string sample { get { return "Vonalkód;Megnevezés;Raktárkészlet;Egységár"; } }
-        private MySqlConnection connection;
-        private string server = "149.200.35.85";
+        public MySqlConnection ? connection;
+        public Boolean dataSQL = false;
         private void ReadFile(string filename)
         {
             products.Clear();
@@ -27,11 +30,11 @@ namespace CodeFox_Shop
             }
             productTable.Items.Refresh();
         }
-        private void WriteFile(string filename)
+        private void WriteFile(string filename, List<Product> list)
         {
-            StreamWriter sw = new StreamWriter(filename);
+            StreamWriter sw = new StreamWriter(new FileStream(filename, FileMode.OpenOrCreate), Encoding.UTF8);
             sw.WriteLine(sample);
-            foreach (Product product in products)
+            foreach (Product product in list)
             {
                 sw.WriteLine($"{product.EAN13};{product.Name};{product.Quantity};{product.Price.ToString().Replace(Convert.ToChar(Thread.CurrentThread.CurrentCulture.NumberFormat.NumberDecimalSeparator), '.')}");
             }
@@ -49,44 +52,35 @@ namespace CodeFox_Shop
             ReadFile(filename);
             productTable.ItemsSource = products;
         }
-
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            WriteFile(filename);
+            WriteFile(filename, products);
             CloseSQLConnection(null,null);
         }
-
         #endregion
         #region MenuItemActions
         private void NewSQLConnection(object sender, RoutedEventArgs e)
         {
             try
             {
-                if (connection != null)
+                Window cSQLw = new ConnectSQLWindow();
+                cSQLw.ShowDialog();
+                if (dataSQL)
                 {
-                    connection.Close();
+                    Console.WriteLine(connection.ConnectionString.ToString());
+                    MySqlCommand cmd = new MySqlCommand("SELECT * FROM products", connection);
+                    MySqlDataReader rdr = cmd.ExecuteReader();
+                    products.Clear();
+                    while (rdr.Read())
+                    {
+                        products.Add(new Product($"{rdr.GetString(0)};{rdr.GetString(1)};{rdr.GetInt32(2)};{rdr.GetDouble(3)}"));
+                    }
+                    productTable.Items.Refresh();
                 }
-                connection = new MySqlConnection();
-                String connectionString = $"server={server};uid=admin;pwd=Admin123;database=systicore";
-                connection.ConnectionString = connectionString;
-                connection.Open();
-                String sql = $"SELECT * FROM products";
-                MySqlCommand cmd = new MySqlCommand(sql, connection);
-                MySqlDataReader rdr = cmd.ExecuteReader();
-                products.Clear();
-                while (rdr.Read())
-                {
-                    products.Add(new Product($"{rdr.GetString(0)};{rdr.GetString(1)};{rdr.GetInt32(2)};{rdr.GetDouble(3)}"));
-                }
-                productTable.Items.Refresh();
             }
-            catch (System.Net.Sockets.SocketException ex)
+            catch (Exception)
             {
-                MessageBox.Show(ex.Message.ToString(), "Nem lehet kapcsolodni");
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.ToString());
+                MessageBox.Show("Nem sikerült elérni a szervert.", "Hiba", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
         private void CloseSQLConnection(object sender, RoutedEventArgs e)
@@ -134,7 +128,7 @@ namespace CodeFox_Shop
                 saveFileDialog.Title = "Save a CSV file";
                 if (saveFileDialog.ShowDialog() == true)
                 {
-                    WriteFile(saveFileDialog.FileName);
+                    WriteFile(saveFileDialog.FileName, products);
                 }
             }
             catch (Exception exception)
@@ -153,6 +147,7 @@ namespace CodeFox_Shop
             {
                 productTable.SelectedIndex = products.Count - 1;
             }
+            // Ha nincs elem akkor hibát dob ki.
             Product helperObject = productTable.SelectedItem as Product;
             MainTabcontrol.SelectedIndex = 1;
             ean13TB.Text = helperObject.EAN13;
@@ -179,6 +174,12 @@ namespace CodeFox_Shop
                             product.Name = nameTB.Text;
                             product.Quantity = Convert.ToInt32(quantityTB.Text);
                             product.Price = Convert.ToDouble(priceTB.Text);
+                            //if (connection != null)
+                            //{
+                            //    MySqlCommand cmd = new MySqlCommand($"UPDATE {tableName} SET ({ean13TB.Text},{nameTB.Text},{quantityTB.Text},{priceTB.Text}) WHERE ", connection);
+                            //    MySqlDataReader rdr = cmd.ExecuteReader();
+                            //    MessageBox.Show(rdr.Read().ToString());
+                            //}
                         }
                         catch
                         {
@@ -190,6 +191,12 @@ namespace CodeFox_Shop
                 if (!contain)
                 {
                     products.Add(new Product($"{ean13TB.Text};{nameTB.Text};{quantityTB.Text};{priceTB.Text}"));
+                    if (connection != null)
+                    {
+                        MySqlCommand cmd = new MySqlCommand($"INSERT INTO {tableName}({ean13TB.Text},{nameTB.Text},{quantityTB.Text},{priceTB.Text})", connection);
+                        MySqlDataReader rdr = cmd.ExecuteReader();
+                        MessageBox.Show(rdr.Read().ToString());
+                    }
                     msgtxt = "Termék hozzáadva";
                 }
             }
@@ -202,7 +209,6 @@ namespace CodeFox_Shop
         }
         #endregion
         #region ertekesitesTabButtonActions
-
         private void newCustomerButton_Click(object sender, RoutedEventArgs e)
         {
             // New Customer
@@ -287,7 +293,6 @@ namespace CodeFox_Shop
                 MessageBox.Show(ex.ToString());
             }
         }
-
         #endregion
         #region Shopping
 
